@@ -1,5 +1,4 @@
 import os
-
 import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
@@ -28,25 +27,20 @@ class Data(BaseModel):
     native_country: str = Field(..., example="United-States", alias="native-country")
 
 
-path = None  # TODO: enter the path for the saved encoder
-encoder = load_model(path)
-
-path = None  # TODO: enter the path for the saved model
-model = load_model(path)
-
-# TODO: create a RESTful API using FastAPI
-app = None  # your code here
+encoder = load_model("model/encoder.pkl")
+model = load_model("model/model.pkl")
 
 
-# TODO: create a GET on the root giving a welcome message
+app = FastAPI()
+
+
+
 @app.get("/")
 async def get_root():
-    """ Say hello!"""
-    # your code here
-    pass
+    return {"message": "Hello from the API!"}
 
 
-# TODO: create a POST on a different path that does model inference
+
 @app.post("/data/")
 async def post_inference(data: Data):
     # DO NOT MODIFY: turn the Pydantic model into a dict.
@@ -68,10 +62,11 @@ async def post_inference(data: Data):
         "native-country",
     ]
     data_processed, _, _, _ = process_data(
-        # your code here
-        # use data as data input
-        # use training = False
-        # do not need to pass lb as input
+        data,
+        categorical_features=cat_features,
+        training=False,
+        encoder=encoder,
+        lb=None,
     )
-    _inference = None  # your code here to predict the result using data_processed
-    return {"result": apply_label(_inference)}
+    preds = inference(model, data_processed)
+    return {"result": apply_label(preds)}

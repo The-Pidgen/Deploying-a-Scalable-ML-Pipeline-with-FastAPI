@@ -1,30 +1,47 @@
-import pytest
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from ml.model import train_model, inference, compute_model_metrics
 
 
-# TODO: add necessary import
 
-# TODO: implement the first test. Change the function name and input as needed
-def test_one():
+
+
+def test_train_model_returns_logistic_regression():
     """
-    # add description for the first test
+    Test that train_model returns a LogisticRegression model
     """
-    # Your code here
-    pass
+    X = np.array([[1, 2], [3, 4], [5, 6]])
+    y = np.array([0, 1, 0])
+
+    model = train_model(X, y)
+
+    assert isinstance(model, LogisticRegression)
 
 
-# TODO: implement the second test. Change the function name and input as needed
-def test_two():
+
+def test_inference_output_length():
     """
-    # add description for the second test
+    Test that inference returns correct number of predictions
     """
-    # Your code here
-    pass
+    X = np.array([[1, 2], [3, 4], [5, 6]])
+    y = np.array([0, 1, 0])
+
+    model = train_model(X, y)
+    preds = inference(model, X)
+
+    assert len(preds) == len(X)
 
 
-# TODO: implement the third test. Change the function name and input as needed
-def test_three():
+
+def test_computer_model_metrics_types():
     """
-    # add description for the third test
+    Test that computer_model_metrics returns floats.
     """
-    # Your code here
-    pass
+    y = np.array([0, 1, 1, 0])
+    preds = np.array([0, 1, 0, 0])
+
+    precision, recall, fbeta = compute_model_metrics(y, preds)
+
+    assert isinstance(precision, float)
+    assert isinstance(recall, float)
+    assert isinstance(fbeta, float)
